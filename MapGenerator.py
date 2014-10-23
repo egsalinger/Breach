@@ -43,10 +43,9 @@ class MapGenerator:
      temp += wall
     else:
      temp += floor
-
-    self.map.append(temp)
-   if DEBUG:
-    self.print_map()
+   self.map.append(temp)
+  if DEBUG:
+   self.print_map()
 
  def printMap(self):	 
   for row in self.map:
@@ -74,4 +73,4 @@ if FAILED:
  sys.exit (1)
 
 map = MapGenerator(x,y)
-map.PrintMap()
+map.printMap()
