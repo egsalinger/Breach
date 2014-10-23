@@ -39,10 +39,10 @@ class MapGenerator:
   for y in range (0, length):
    temp = ''
    for x in range (0, width):
-   if (x == 0 or y == 0 or x == width-1 or y == length-1):
-    temp += wall
-   else:
-    temp += floor
+    if (x == 0 or y == 0 or x == width-1 or y == length-1):
+     temp += wall
+    else:
+     temp += floor
 
     self.map.append(temp)
    if DEBUG:
