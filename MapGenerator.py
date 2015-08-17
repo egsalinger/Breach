@@ -10,6 +10,7 @@ class MapGenerator:
  1) Given a house of size (x, y), the house consists of walls (X's)
  and empty space (.'s).
  A sample house will look like this:
+
  XXXXXXXXXXXXXXX
  X.X......X....X
  X.X......X....X
@@ -25,10 +26,15 @@ class MapGenerator:
  3) Add doors randomly, until all rooms in the house
  are connected.
  4) Add at least one entrance/exit.
- 5) To add: Windows, hallways, multiple floors."""
+ 5) To add: Windows, hallways, multiple floors.
+
+"""
  
  wall = 'X'
  floor = '.'
+ doorClosed = "="
+ doorOpen = "+"
+ floorObjects = {}
 
  def createFloor (self, width, length):
   self.width = width
@@ -51,7 +57,6 @@ class MapGenerator:
 
   # Assume each space = 25 sqft and account for outside.
   area = (length-2)*(width-2)
-
   # Assume 100 sqft = average room size
   # Each space = 25 sqft.
   # TODO: Walls should be thinner, and placed in between tiles.
@@ -59,6 +64,7 @@ class MapGenerator:
   self.generateWalls(numWalls)
   if DEBUG:
    self.printMap()
+  self.generateDoors()
 
  def generateWalls(self, howMany):
   i = 0
@@ -83,7 +89,6 @@ class MapGenerator:
    neighbors.append (self.map [x][y+1])
   if y > 0:
    neighbors.append (self.map [x][y-1])
-
   return neighbors
 
 
@@ -122,10 +127,18 @@ class MapGenerator:
    self.changeToTile (curx, cury, self.wall)
   cury = 1
 
+
  def changeToTile (self, curx, cury, tile):
+   if (tile != self.floor and tile not in self.floorObjects):
+    self.floorObjects[tile] = [[curx, cury]]
+   elif (tile != self.floor):
+    self.floorObjects[tile].append([curx, cury])
+   if (self.map[curx][cury] in self.floorObjects):
+    self.floorObjects[tile].remove([curx, cury])
    self.map [curx][cury] = tile
    if DEBUG:
     self.printMap()
+    print self.floorObjects
    
 
  def printMap(self):	 
@@ -135,9 +148,31 @@ class MapGenerator:
    print ''
   print "\n"
 
+""" Door Generation:
 
+Basically, the network of rooms in a house form a graph. Each room is a node
+and its neighbors are connected via edges. If we cut cycles from the graph,
+we can then create a discrete set of paths between rooms, which become doors.
 
-DEBUG = False
+ Detect rooms
+ For each room:
+  Detect neighboring rooms
+  Create a "graph" of room neighbors
+  (key: room, value: roomNeighbors)
+ pick a random startNode from rooms
+ perform DFS from startNode
+  if (during DFS) a duplicate room is found)
+  flip a coin (x% chance either way to start)
+   if heads:
+    remove connection
+   if tails:
+    keep connection
+
+"""
+ def generateDoors(self):
+  print "Doors not yet generated."  
+
+DEBUG = True
 FAILED = False
 x = 5
 y = 5
